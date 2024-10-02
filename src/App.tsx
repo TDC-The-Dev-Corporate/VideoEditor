@@ -109,7 +109,7 @@ function App() {
         inputProps={{
           setTimelineWidth,
           setVideoDuration,
-          currentTimeInSeconds: currentTime,
+          currentTimeInSeconds: currentTime ?? 0,
           setTotalFrames,
         }}
         renderLoading={renderLoading}
