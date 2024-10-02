@@ -8,7 +8,7 @@ export const useCurrentPlayerFrame = (ref: React.RefObject<PlayerRef>) => {
       if (!current) {
         return () => undefined;
       }
-      const updater: CallbackListener<"frameupdate"> = ({ detail }) => {
+      const updater: CallbackListener<"frameupdate"> = () => {
         onStoreChange();
       };
       current.addEventListener("frameupdate", updater);
@@ -25,5 +25,5 @@ export const useCurrentPlayerFrame = (ref: React.RefObject<PlayerRef>) => {
     () => 0
   );
 
-  return data;
+  return data ?? 0;
 };
