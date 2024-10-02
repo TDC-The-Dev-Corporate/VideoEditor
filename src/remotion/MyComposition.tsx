@@ -6,14 +6,18 @@ export const MyComposition = ({
   setVideoDuration,
   currentTimeInSeconds,
   setTotalFrames,
+}: {
+  setTimelineWidth: (width: number) => void;
+  setVideoDuration: (duration: number) => void;
+  currentTimeInSeconds: number;
+  setTotalFrames: (totalFrames: number) => void;
 }) => {
   const [objectUrl, setObjectUrl] = useState<string | null>(null);
 
-  const { durationInFrames, fps, width, height } = useVideoConfig();
+  const { durationInFrames, fps } = useVideoConfig();
 
   useEffect(() => {
     const durationInSeconds = durationInFrames / fps;
-    console.log("durationInFrames", durationInFrames);
     setVideoDuration(durationInSeconds);
     setTotalFrames(durationInFrames);
   }, [durationInFrames, fps, setVideoDuration, setTotalFrames]);
@@ -31,13 +35,10 @@ export const MyComposition = ({
       videoElement.src = url;
       videoElement.preload = "metadata";
 
-      videoElement.addEventListener("loadedmetadata", (data) => {
-        console.log(data.currentTarget);
+      videoElement.addEventListener("loadedmetadata", () => {
         const videoDurationInSeconds = videoElement.duration;
-        console.log("Video Duration in seconds:", videoDurationInSeconds); // Log the duration
-        const videoDurationInMilliseconds = videoDurationInSeconds * 1000;
-        setVideoDuration(videoDurationInMilliseconds);
-        setTimelineWidth(videoDurationInMilliseconds);
+        setVideoDuration(videoDurationInSeconds * 1000);
+        setTimelineWidth(videoDurationInSeconds * 1000);
       });
 
       return () => {

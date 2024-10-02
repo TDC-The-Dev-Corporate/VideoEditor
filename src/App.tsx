@@ -3,19 +3,19 @@ import { Player, RenderLoading, PlayerRef } from "@remotion/player";
 import { MyComposition } from "./remotion/MyComposition";
 import { useCallback, useState, useRef, useEffect } from "react";
 import { AbsoluteFill } from "remotion";
-import { TimeDisplay } from "./remotion/Timedisplay";
+import { TimeDisplay } from "./remotion/TimeDisplay";
 
 function App() {
   const [timelineWidth, setTimelineWidth] = useState<number>(1);
   const [totalFrames, setTotalFrames] = useState<number>(1);
   const [videoDuration, setVideoDuration] = useState<number>(0);
-  const [currentTime, setCurrentTime] = useState<number>(0);
+  const [currentTime, setCurrentTime] = useState<number | undefined>(undefined);
   const [isDraggingStart, setIsDraggingStart] = useState<boolean>(false);
   const [isDraggingEnd, setIsDraggingEnd] = useState<boolean>(false);
   const [startTime, setStartTime] = useState<number>(0);
-  const [endTime, setEndTime] = useState<number>(videoDuration);
+  const [endTime, setEndTime] = useState<number>(0);
   const playerRef = useRef<PlayerRef>(null);
-
+  console.log(timelineWidth);
   const renderLoading: RenderLoading = useCallback(({ height, width }) => {
     return (
       <AbsoluteFill style={{ backgroundColor: "gray" }}>
@@ -44,7 +44,7 @@ function App() {
     setIsDraggingEnd(true);
   };
 
-  const handleMouseMove = (event) => {
+  const handleMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
     // Prevent seeking on handle drag
     if (isDraggingStart || isDraggingEnd) {
       const timeline = event.currentTarget;
@@ -66,7 +66,7 @@ function App() {
   };
 
   // Function to set the current time of the player
-  const setPlayerCurrentTime = (timeInSeconds) => {
+  const setPlayerCurrentTime = (timeInSeconds: number) => {
     if (playerRef.current) {
       playerRef.current.seekTo(timeInSeconds);
     }
@@ -74,11 +74,13 @@ function App() {
 
   // Update the current time based on start and end time whenever the user interacts
   useEffect(() => {
-    const newCurrentTime = Math.min(
-      Math.max(currentTime, startTime / 1000),
-      endTime / 1000
-    ); // Keep current time within start and end time
-    setPlayerCurrentTime(newCurrentTime);
+    if (currentTime !== undefined) {
+      const newCurrentTime = Math.min(
+        Math.max(currentTime, startTime / 1000),
+        endTime / 1000
+      ); // Keep current time within start and end time
+      setPlayerCurrentTime(newCurrentTime);
+    }
   }, [startTime, endTime, currentTime]);
 
   // Update video playback position when currentTime changes
@@ -89,13 +91,13 @@ function App() {
   }, [currentTime]);
 
   // Update currentTime state when the user clicks on the timeline
-  const handleClickTimeline = (event) => {
+  const handleClickTimeline = (event: React.MouseEvent<HTMLDivElement>) => {
     const timeline = event.currentTarget;
     const rect = timeline.getBoundingClientRect();
     const offsetX = event.clientX - rect.left;
     const newTime = (offsetX / rect.width) * videoDuration;
 
-    playerRef.current.pause();
+    playerRef?.current?.pause();
     setCurrentTime(newTime); // Update the currentTime state to reflect the new time
   };
 
