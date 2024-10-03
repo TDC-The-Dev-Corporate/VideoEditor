@@ -4,6 +4,13 @@
   padding: 2rem;
   text-align: center;
 }
+.dropzone {
+  border: 2px dashed #007bff;
+  border-radius: 5px;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+}
 
 .logo {
   height: 6em;
